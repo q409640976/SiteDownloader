@@ -6,9 +6,13 @@ import url_functions as uf
 def download_all_from_url(main_url, filetype_exts, path='assets'):
     """Downloads files from the website"""
     create_folder(path)
+    print("Fetching urls...")
     urls = uf.get_urls(main_url)
+    print("Found: " + str(len(urls)))
 
     for url in urls:
+
+        print("Downloading contents from: " + url)
 
         # download from it if it is a wanted filetype
         if check_if_file(url, filetype_exts):
@@ -16,7 +20,7 @@ def download_all_from_url(main_url, filetype_exts, path='assets'):
 
         # look for urls on that website and download if possible
         else:
-            sub_urls = uf.get_all_urls(url, root=uf.get_root(main_url))
+            sub_urls = uf.get_all_urls(url, roots=uf.get_roots(main_url))
 
             for sub_url in sub_urls:
                 # download from it if it is a wanted filetype
