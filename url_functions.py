@@ -1,13 +1,14 @@
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
 from urllib.error import HTTPError, URLError
+from socket import timeout
 
 
 def verify_url(link, timeout_sec=1):
     """Checks if url is valid by checking the header."""
     try:
         return urlopen(link, timeout=timeout_sec).getcode() == 200
-    except (HTTPError, URLError, ValueError):
+    except (HTTPError, URLError, ValueError, timeout):
         return False
 
 
@@ -34,13 +35,19 @@ def get_all_urls(link, add_to=None, roots=None):
         add_to = []
     urls = []
     potential_urls = get_all_potential_urls(link)
-    print(potential_urls)
+
+    if link not in add_to:
+        add_to.append(link)
+
+    print("PARENT URL: " + link)
+
     for potential_url in potential_urls:
 
         if roots[0] in potential_url or roots[1] in potential_url:
             if potential_url not in add_to and verify_url(potential_url):
                 add_to.append(potential_url)
                 urls.append(potential_url)
+                print("added: " + potential_url)
 
         # sometimes root + potential_url may be a valid web page
         else:
@@ -48,8 +55,11 @@ def get_all_urls(link, add_to=None, roots=None):
             for root in roots:
                 new_pot_url = 'http://' + root + potential_url
                 if new_pot_url not in add_to and verify_url(new_pot_url):
-                    add_to.append('http://' + root + potential_url)
-                    urls.append('http://' + root + potential_url)
+                    add_to.append(new_pot_url)
+                    urls.append(new_pot_url)
+                    print("added: " + new_pot_url)
+
+    print("END OF LOOP")
 
     return urls
 
@@ -85,3 +95,4 @@ def get_urls(link):
     links = []
     get_all_urls_recursive(link, links)
     return links
+

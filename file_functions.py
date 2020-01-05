@@ -1,18 +1,34 @@
 import os
 from urllib.request import urlopen
 import url_functions as uf
+import time
+
+# note to self: make it so that you can download webpages.
 
 
 def download_all_from_url(main_url, filetype_exts, path='assets'):
     """Downloads files from the website"""
     create_folder(path)
-    print("Fetching urls...")
+    print("""
+=============================================
+Fetching urls...
+=============================================
+    """)
+    start_time = time.time()
     urls = uf.get_urls(main_url)
-    print("Found: " + str(len(urls)))
+    print("""
+=============================================
+Finished fetching urls.
+Now Downloading urls.
+=============================================
+    """)
+    print("Time taken to fetch URLS:" + str(time.time() - start_time))
+    start_time = time.time()
+    print("# of urls: " + str(len(urls)))
 
     for url in urls:
 
-        print("Downloading contents from: " + url)
+        print("Downloading...")
 
         # download from it if it is a wanted filetype
         if check_if_file(url, filetype_exts):
@@ -26,6 +42,10 @@ def download_all_from_url(main_url, filetype_exts, path='assets'):
                 # download from it if it is a wanted filetype
                 if check_if_file(sub_url, filetype_exts):
                     download_by_url(sub_url, path + '/')
+
+        print("Downloaded contents from: " + url)
+
+    print("Time taken to download URLS:" + str(time.time() - start_time))
 
 
 def check_if_file(url, filetype_exts):
@@ -43,7 +63,7 @@ def download_by_url(url, folderpath):
     """Download the file/website itself."""
     response = urlopen(url)
     data = response.read()
-    file = open(folderpath + url.split('/')[-1], 'w')
+    file = open(folderpath + url.split('/')[-1], 'wb')
     file.write(data)
     file.close()
 

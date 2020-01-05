@@ -13,7 +13,11 @@ def temp_ui(url=None):
             break
         exts.append(potential_ext)
     ff.download_all_from_url(url, exts)
-    print("Finished!")
+    print("""
+=============================================
+Finished! Check the assets folder!
+=============================================
+        """)
 
 
 if __name__ == "__main__":
