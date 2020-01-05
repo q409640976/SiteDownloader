@@ -21,4 +21,12 @@ Finished! Check the assets folder!
 
 
 if __name__ == "__main__":
-    temp_ui()
+
+    url = "" # change url here
+
+    if url == "":
+        # or change via one line textfile.
+        with open('url.txt', 'r') as f:
+            url = f.readline()
+
+    temp_ui(url)

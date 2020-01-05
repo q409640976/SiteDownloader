@@ -2,7 +2,6 @@ import os
 from urllib.request import urlopen
 import url_functions as uf
 import time
-
 # note to self: make it so that you can download webpages.
 
 
@@ -28,11 +27,10 @@ Now Downloading urls.
 
     for url in urls:
 
-        print("Downloading...")
-
         # download from it if it is a wanted filetype
         if check_if_file(url, filetype_exts):
             download_by_url(url, path + '/')
+            print("Downloaded: " + url)
 
         # look for urls on that website and download if possible
         else:
@@ -43,7 +41,7 @@ Now Downloading urls.
                 if check_if_file(sub_url, filetype_exts):
                     download_by_url(sub_url, path + '/')
 
-        print("Downloaded contents from: " + url)
+            print("Downloaded contents from: " + url)
 
     print("Time taken to download URLS:" + str(time.time() - start_time))
 
@@ -62,10 +60,15 @@ def check_if_file(url, filetype_exts):
 def download_by_url(url, folderpath):
     """Download the file/website itself."""
     response = urlopen(url)
-    data = response.read()
+    try:
+        data = response.read()
+    except: # IncompleteRead errors
+        print("Error: Either IncompleteRead or something else. Will retry.")
+        data = response.read() # make this recursive.
     file = open(folderpath + url.split('/')[-1], 'wb')
     file.write(data)
     file.close()
+
 
 
 def create_folder(foldername='assets'):
