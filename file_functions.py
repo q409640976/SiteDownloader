@@ -34,7 +34,7 @@ Now Downloading urls.
 
         # look for urls on that website and download if possible
         else:
-            sub_urls = uf.get_all_urls(url, roots=uf.get_roots(main_url))
+            sub_urls = uf.get_all_urls(url, root=uf.get_root(main_url))
 
             for sub_url in sub_urls:
                 # download from it if it is a wanted filetype
@@ -59,12 +59,16 @@ def check_if_file(url, filetype_exts):
 
 def download_by_url(url, folderpath):
     """Download the file/website itself."""
+
+    def retrieve_data(r):
+        try:
+            return r.read()
+        except:
+            print("Found error in: " + url)
+            return retrieve_data(r)
+
     response = urlopen(url)
-    try:
-        data = response.read()
-    except: # IncompleteRead errors
-        print("Error: Either IncompleteRead or something else. Will retry.")
-        data = response.read() # make this recursive.
+    data = retrieve_data(response)
     file = open(folderpath + url.split('/')[-1], 'wb')
     file.write(data)
     file.close()
